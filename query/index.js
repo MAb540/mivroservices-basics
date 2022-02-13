@@ -9,7 +9,7 @@ app.use(cors());
 
 const posts = {};
 
-const handleEvents = (type,data) => {
+const handleEvents = (type, data) => {
   if (type === "PostCreated") {
     const { id, title } = data;
     posts[id] = { id, title, comments: [] };
@@ -43,14 +43,12 @@ app.post("/events", (req, res) => {
 
 const port = 4002;
 app.listen(port, async () => {
+  console.log("listening on port: ", port);
 
-    console.log("listening on port: ", port)
+  const res = await axios.get("http://event-bus-srv:4005/events");
 
-    const res = await axios.get('http://localhost:4005/events');
-
-    for(let event of res.data){
-        console.log('Processing event: ',event.type);
-        handleEvents(event.type, event.data);
-    }
-
+  for (let event of res.data) {
+    console.log("Processing event: ", event.type);
+    handleEvents(event.type, event.data);
+  }
 });
