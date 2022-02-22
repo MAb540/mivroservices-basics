@@ -36,6 +36,6 @@ app.post("/events", async (req, res, next) => {
 
 const port = 4000;
 app.listen(port, () => {
-  console.log("version 2 to version 5, new latest version available");
+  console.log("version:latest,  new latest version available");
   console.log("listening on port: ", port);
 });
