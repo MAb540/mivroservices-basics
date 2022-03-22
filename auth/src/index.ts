@@ -1,14 +1,23 @@
+import cookieSession from "cookie-session";
 import express from "express";
+import mongoose from "mongoose";
 import currentUser from "./routes/current-user";
 import signoutRouter from "./routes/signout";
 
 import signupRouter from "./routes/signup";
-import { errorHandler } from "./Utility/error-handler";
-import { NotFoundError } from "./Utility/not-found-error";
+import { errorHandler } from "./Utility/errors/error-handler";
+import { NotFoundError } from "./Utility/errors/not-found-error";
 
 const app = express();
+app.set("trust proxy", true);
 
 app.use(express.json({ limit: "1mb" }));
+app.use(
+  cookieSession({
+    signed: false,
+    secure: true,
+  })
+);
 
 app.use(currentUser);
 app.use(signoutRouter);
@@ -22,5 +31,15 @@ app.all("*", async (req, res, next) => {
 
 app.use(errorHandler);
 
-const PORT = 3000;
-app.listen(PORT, () => console.log("Auth Server is running on port: ", PORT));
+const startUp = async (): Promise<void> => {
+  try {
+    await mongoose.connect("mongodb://auth-mongo-srv:27017/auth");
+    console.log("connecte to mongo db");
+  } catch (err) {
+    console.error("Error connecting to: ", err);
+  }
+  const PORT = 3000;
+  app.listen(PORT, () => console.log("Auth Server is running on port: ", PORT));
+};
+
+startUp();
