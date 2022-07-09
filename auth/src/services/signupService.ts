@@ -24,14 +24,17 @@ export async function signUp(req: Request, res: Response, next: NextFunction) {
 
   const user = User.build({ email, password });
   await user.save();
-
+  // one way to handle typescrpt jwt undefined error
+  // if(!process.env.JWT_KEY){
+  //   throw new Error('JWT Env variable is not defined')
+  // }
   // Generate JWT
   const userJwt = jwt.sign(
     {
       id: user.id,
       email: user.email,
     },
-    "asdf"
+    process.env.JWT_KEY! // '!' is used to make typescript happy when we are 100% sure that a variable can not be undefined
   );
 
   // Store token on session object

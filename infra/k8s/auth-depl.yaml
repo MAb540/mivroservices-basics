@@ -18,6 +18,12 @@ spec:
       containers:
         - name: auth
           image: mab54/auth
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwtsecret
+                  key: JWT_KEY
 
 ---
 apiVersion: v1
